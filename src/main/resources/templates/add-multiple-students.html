@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Multiple Students</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-4">
+    <h3>Add Multiple Students</h3>
+    <hr/>
+
+    <form th:action="@{/students/bulk/save}"
+          method="post"
+          th:object="${studentsWrapper}">
+
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Email</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="i : ${#numbers.sequence(0,4)}">
+                <td>
+                    <input type="text"
+                           th:name="students[__${i}__].firstName"
+                           class="form-control"
+                           required/>
+                </td>
+                <td>
+                    <input type="text"
+                           th:name="students[__${i}__].lastName"
+                           class="form-control"/>
+                </td>
+                <td>
+                    <input type="email"
+                           th:name="students[__${i}__].email"
+                           class="form-control"/>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn btn-success">
+            Save All Students
+        </button>
+
+        <a th:href="@{/students}" class="btn btn-secondary ml-2">
+            Back to Main Page
+        </a>
+    </form>
+</div>
+
+</body>
+</html>

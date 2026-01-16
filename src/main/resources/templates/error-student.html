@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Student Not Found</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5 text-center">
+    <h2 class="text-danger">Oops!</h2>
+    <p class="lead" th:text="${errorMessage}"></p>
+
+    <a th:href="@{/students}" class="btn btn-primary mt-3">
+        Back to Main Page
+    </a>
+</div>
+
+</body>
+</html>

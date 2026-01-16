@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Student Details</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h3>Student Details</h3>
+    <hr/>
+
+    <p><strong>First Name:</strong> <span th:text="${student.firstName}"></span></p>
+    <p><strong>Last Name:</strong> <span th:text="${student.lastName}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${student.email}"></span></p>
+
+    <a th:href="@{/students}" class="btn btn-secondary mt-3">
+        Back to Main Page
+    </a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Search Student Address</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-4">
+
+    <h3>Search Student Address</h3>
+
+    <form th:action="@{/students/address-search}"
+          method="get"
+          class="form-inline mb-3">
+
+        <input type="text"
+               name="firstName"
+               class="form-control mr-2"
+               placeholder="Enter student first name"
+               required>
+
+        <button type="submit"
+                class="btn btn-primary">
+            Search
+        </button>
+    </form>
+
+    <div th:if="${address != null}">
+        <h5>Address Details</h5>
+        <table class="table table-bordered">
+            <tr>
+                <th>Street</th>
+                <td th:text="${address.street}"></td>
+            </tr>
+            <tr>
+                <th>City</th>
+                <td th:text="${address.city}"></td>
+            </tr>
+            <tr>
+                <th>State</th>
+                <td th:text="${address.state}"></td>
+            </tr>
+            <tr>
+                <th>Pincode</th>
+                <td th:text="${address.pincode}"></td>
+            </tr>
+        </table>
+    </div>
+    <a th:href="@{/students}"
+       class="btn btn-primary mt-3">
+        Back to Student List
+    </a>
+</div>
+</body>
+</html>
