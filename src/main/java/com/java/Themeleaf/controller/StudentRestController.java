@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -28,13 +29,14 @@ public class StudentRestController {
     private final StudentRepository studentRepository;
 
     @GetMapping("/address")
+    @PreAuthorize("hasRole('ADMIN')")
     public StudentAddressDTO getStudentAddress(
             @RequestParam String firstName) {
-
+        System.out.println("firstName "+firstName);
         Student student = studentRepository
                 .findByFirstNameIgnoreCase(firstName)
                 .orElseThrow(() -> new RuntimeException("Student not found"));
-
+        System.out.println("student "+student);
         Address address = student.getAddress();
 
         StudentAddressDTO dto = new StudentAddressDTO();

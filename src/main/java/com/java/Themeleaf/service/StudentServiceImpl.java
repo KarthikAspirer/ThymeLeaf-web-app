@@ -11,6 +11,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +27,7 @@ import java.util.List;
 public class StudentServiceImpl implements StudentService{
     private final StudentRepository studentRepository;
     private final DepartmentRepository departmentRepository;
+    private final UserLogService userLogService;
 
     public Page<Student> getStudentsWithPagination(int pageNo, int pageSize) {
         return studentRepository.findAll(PageRequest.of(pageNo, pageSize));
@@ -34,6 +37,7 @@ public class StudentServiceImpl implements StudentService{
 //            value = "studentByName",
 //            key = "#firstName"
 //    )
+    @PreAuthorize("hasRole('ADMIN')")
     public Student getStudentByFirstName(String firstName) {
         System.out.println("Fetching student from DB...");
         return studentRepository
@@ -88,7 +92,9 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
 //    @CacheEvict(value = "studentByName", allEntries = true)
+    @PreAuthorize("hasRole('USER')")
     public Student saveStudent(Student student,Long departmentId) {
+        userLogService.log("CREATE",student.getFirstName());
         Department dept =
                 departmentRepository.findById(departmentId)
                         .orElseThrow(() -> new RuntimeException("Department not found"));
@@ -104,13 +110,20 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
 //    @CacheEvict(value = "studentByName", allEntries = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public Student updateStudent(Student student) {
         return studentRepository.save(student);
     }
 
     @Override
 //    @CacheEvict(value = "studentByName", allEntries = true)
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteStudentById(Long id) {
+       Student student = studentRepository.findById(id).orElseThrow(() ->
+                new StudentNotFoundException(
+                        "Student with ID '" + id + "' not found"));
+
+        userLogService.log("DELETE",student.getFirstName());
         studentRepository.deleteById(id);
     }
 }

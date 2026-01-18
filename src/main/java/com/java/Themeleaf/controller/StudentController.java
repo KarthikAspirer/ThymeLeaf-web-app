@@ -4,17 +4,26 @@ package com.java.Themeleaf.controller;
 import com.java.Themeleaf.dto.StudentAddressDTO;
 import com.java.Themeleaf.entity.Address;
 import com.java.Themeleaf.entity.Student;
+import com.java.Themeleaf.entity.User;
 import com.java.Themeleaf.exception.FileUploadException;
 import com.java.Themeleaf.helperClass.StudentListWrapper;
 import com.java.Themeleaf.repository.StudentRepository;
+import com.java.Themeleaf.repository.UserRepository;
 import com.java.Themeleaf.service.StudentService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -33,7 +42,8 @@ public class StudentController {
 
     private final RestTemplate restTemplate;
     private final StudentService studentService;
-
+    @Autowired
+    private HttpServletRequest request;
 
     @GetMapping("/students")
     //http://localhost:8080/students
@@ -81,6 +91,7 @@ public class StudentController {
             Model model) {
         Student student = studentService.getStudentByFirstName(firstName);
         model.addAttribute("student", student);
+        System.out.println("Department details "+student.getDepartment().getName());
         return "view-student";
     }
     @GetMapping("/students/new")
@@ -149,6 +160,7 @@ public class StudentController {
         writer.close();
     }
 
+   // @PreAuthorize("hasRole('ADMIN','USER')")
     @GetMapping("/students/address-search")
     public String showSearchPage(
             @RequestParam(required = false) String firstName,
@@ -156,12 +168,23 @@ public class StudentController {
 
         if (firstName != null) {
             String url = "http://localhost:8080/api/students/address?firstName=" + firstName;
+            String sessionId = request.getSession().getId();
 
-            StudentAddressDTO response =
-                    restTemplate.getForObject(url, StudentAddressDTO.class);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Cookie", "JSESSIONID=" + sessionId);
+            HttpEntity<Void> entity = new HttpEntity<>(headers);
+
+            ResponseEntity<StudentAddressDTO> response =
+                    restTemplate.exchange(
+                            url,
+                            HttpMethod.GET,
+                          // null,
+                            entity,
+                            StudentAddressDTO.class
+                    );
 
 
-            model.addAttribute("address", response);
+            model.addAttribute("address", response.getBody());
         }
 
         return "student-address-search";

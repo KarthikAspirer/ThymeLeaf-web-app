@@ -14,6 +14,7 @@
     <p><strong>First Name:</strong> <span th:text="${student.firstName}"></span></p>
     <p><strong>Last Name:</strong> <span th:text="${student.lastName}"></span></p>
     <p><strong>Email:</strong> <span th:text="${student.email}"></span></p>
+    <p><strong>Department:</strong> <span th:text="${student.department.name}"></span></p>
 
     <a th:href="@{/students}" class="btn btn-secondary mt-3">
         Back to Main Page
